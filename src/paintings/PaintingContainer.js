@@ -7,35 +7,42 @@ import * as actions from '../actions';
 // By default import will look for a file called index.js in any directory
 
 class PaintingContainer extends Component {
-  componentDidMount() {
-    // NOTE: no async stuff yet. For now we'll
-    // just fetch some data in another file.
-    // We'll still use the lifecycle method
-    // so we can easily add async later
-    this.props.fetchPaintings();
-  }
+	componentDidMount() {
+		// NOTE: no async stuff yet. For now we'll
+		// just fetch some data in another file.
+		// We'll still use the lifecycle method
+		// so we can easily add async later
+		this.props.fetchPaintings();
+	}
 
-  render() {
-    return (
-      <div className="row">
-        <div className="six wide column">
-          <PaintingList paintings={this.props.paintings} />
-        </div>
-        <div className="ten wide column">
-          {this.props.activePainting ? (
-            <PaintingShow painting={this.props.activePainting} />
-          ) : (
-            <h3>select a painting</h3>
-          )}
-        </div>
-      </div>
-    );
-  }
+	componentDidUpdate() {
+		if (!this.props.activePainting) { this.props.selectPainting(this.props.paintings[0].id) }
+	}
+
+	render() {
+		return (
+			<div className="row">
+				<div className="six wide column">
+					<PaintingList paintings={this.props.paintings} />
+				</div>
+				<div className="ten wide column">
+					{this.props.activePainting ? (
+						<PaintingShow painting={this.props.activePainting} />
+					) : (
+							<h3>select a painting</h3>
+						)}
+				</div>
+			</div>
+		);
+	}
 }
 
+
+
 const mapStateToProps = state => ({
-  paintings: state.paintings,
-  activePainting: state.paintings.find(p => p.id === state.activePaintingId)
+	paintings: state.paintings,
+	activePainting: state.paintings.find(p => p.id === state.activePaintingId),
+	filter: state.filter
 });
 
 export default connect(mapStateToProps, actions)(PaintingContainer);
